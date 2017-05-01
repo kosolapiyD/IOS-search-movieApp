@@ -12,7 +12,7 @@ class SearchResult {
     
     var title = ""
     var releaseDate = ""
-    var genre = 0
+    var genre = ""
     var voteAverage = 0.0
     var posterPath = ""
 }
