@@ -12,6 +12,7 @@
 		4C3B62701EB71C5B00AB3C18 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C3B626E1EB71C5B00AB3C18 /* Main.storyboard */; };
 		4C3B62721EB71C5B00AB3C18 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C3B62711EB71C5B00AB3C18 /* Assets.xcassets */; };
 		4C3B62751EB71C5B00AB3C18 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C3B62731EB71C5B00AB3C18 /* LaunchScreen.storyboard */; };
+		4C3B627D1EB72D3900AB3C18 /* SearchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3B627C1EB72D3900AB3C18 /* SearchResult.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		4C3B62711EB71C5B00AB3C18 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4C3B62741EB71C5B00AB3C18 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4C3B62761EB71C5B00AB3C18 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4C3B627C1EB72D3900AB3C18 /* SearchResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchResult.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 				4C3B62711EB71C5B00AB3C18 /* Assets.xcassets */,
 				4C3B62731EB71C5B00AB3C18 /* LaunchScreen.storyboard */,
 				4C3B62761EB71C5B00AB3C18 /* Info.plist */,
+				4C3B627C1EB72D3900AB3C18 /* SearchResult.swift */,
 			);
 			path = DBmovieApp;
 			sourceTree = "<group>";
@@ -137,6 +140,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C3B626D1EB71C5B00AB3C18 /* SearchViewController.swift in Sources */,
+				4C3B627D1EB72D3900AB3C18 /* SearchResult.swift in Sources */,
 				4C3B626B1EB71C5B00AB3C18 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -299,6 +303,7 @@
 				4C3B627B1EB71C5B00AB3C18 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
