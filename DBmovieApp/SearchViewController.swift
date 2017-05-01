@@ -20,6 +20,12 @@ class SearchViewController: UIViewController {
         super.viewDidLoad()
         // add 64 point margin at the top
         tableView.contentInset = UIEdgeInsets(top: 64, left: 0, bottom: 0, right: 0)
+        tableView.rowHeight = 80
+        // load the nib
+        var cellNib = UINib(nibName: CellIdentifiers.searchResultCell, bundle: nil)
+        tableView.register(cellNib, forCellReuseIdentifier: CellIdentifiers.searchResultCell)
+        cellNib = UINib(nibName: CellIdentifiers.nothingFoundCell, bundle: nil)
+        tableView.register(cellNib, forCellReuseIdentifier: CellIdentifiers.nothingFoundCell)
         
     }
 
@@ -27,7 +33,13 @@ class SearchViewController: UIViewController {
         super.didReceiveMemoryWarning()
         
     }
+    
 
+    // struct with identifier constants
+    struct CellIdentifiers {
+        static let searchResultCell = "SearchResultCell"
+        static let nothingFoundCell = "NothingFoundCell"
+    }
 
 }
 // MARK: -> EXTENSIONS
@@ -66,22 +78,17 @@ extension SearchViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let cellIdentifier = "SearchResultCell"
-        var cell: UITableViewCell! = tableView.dequeueReusableCell(withIdentifier: cellIdentifier)
-        if cell == nil {
-            cell = UITableViewCell(style: .subtitle, reuseIdentifier: cellIdentifier)
-        }
-        
-        if searchResults.count == 0 {
-            cell.textLabel!.text = "(Nothing Found)"
-            cell.detailTextLabel!.text = ""
+        if searchBar.text! == "Not"
+        /*if searchResults.count == 0*/ {
+            return tableView.dequeueReusableCell(withIdentifier: CellIdentifiers.nothingFoundCell, for: indexPath) // custom cell nib 'Nothing Found'
         } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifiers.searchResultCell, for: indexPath) as! SearchResultCell // custom nib cell
+            
             let searchResult = searchResults[indexPath.row]
-            cell.textLabel!.text = searchResult.title
-            cell.detailTextLabel!.text = searchResult.releaseDate
+            cell.titleLabel.text = searchResult.title
+            cell.releaseDateLabel.text = searchResult.releaseDate
+            return cell
         }
-        return cell
     }
     
 }
