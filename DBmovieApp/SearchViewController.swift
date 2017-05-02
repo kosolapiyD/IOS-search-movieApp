@@ -17,17 +17,20 @@ class SearchViewController: UIViewController {
     //var searchResult = SearchResult()
     
     var hasSearched = false
+    var isLoading = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // add 64 point margin at the top
         tableView.contentInset = UIEdgeInsets(top: 64, left: 0, bottom: 0, right: 0)
         tableView.rowHeight = 80
-        // load the nib
+        // load the nib (custom cells)
         var cellNib = UINib(nibName: CellIdentifiers.searchResultCell, bundle: nil)
         tableView.register(cellNib, forCellReuseIdentifier: CellIdentifiers.searchResultCell)
         cellNib = UINib(nibName: CellIdentifiers.nothingFoundCell, bundle: nil)
         tableView.register(cellNib, forCellReuseIdentifier: CellIdentifiers.nothingFoundCell)
+        cellNib = UINib(nibName: CellIdentifiers.loadingCell, bundle: nil)
+        tableView.register(cellNib, forCellReuseIdentifier: CellIdentifiers.loadingCell)
         
     }
 
@@ -40,6 +43,7 @@ class SearchViewController: UIViewController {
     struct CellIdentifiers {
         static let searchResultCell = "SearchResultCell"
         static let nothingFoundCell = "NothingFoundCell"
+        static let loadingCell = "LoadingCell"
     }
     
     func searchMovieUrl(searchText: String) -> URL {
@@ -108,7 +112,6 @@ class SearchViewController: UIViewController {
         
         searchResult.title = dictionary["title"] as! String
         searchResult.releaseDate = dictionary["release_date"] as! String
-        //searchResult.voteAverage = dictionary["vote_average"] as! String
         
         if let vote = dictionary["vote_average"] as? Double {
             searchResult.voteAverage = vote
@@ -165,21 +168,39 @@ extension SearchViewController: UISearchBarDelegate {
         if !searchBar.text!.isEmpty {
             searchBar.resignFirstResponder()
             
+            // before the networking request, set isLoading to true and reload the table to show the activity indicator
+            isLoading = true
+            tableView.reloadData()
+            
             hasSearched = true
             searchResults = []
             
-            let url = searchMovieUrl(searchText: searchBar.text!)
+            let queue = DispatchQueue.global()
             
-            if let jsonString = performMovieDbRequest(with: url) {
-                if let jsonDictionary = parse(json: jsonString) {
-                    //print("Dictionary ==> \(jsonDictionary)")
-                    searchResults = parse(dictionary: jsonDictionary)
-                    //parse(dictionary: jsonDictionary)
-                    tableView.reloadData()
-                    return // if there is no error - return
+            queue.async { // code is in this closure will be put on the queue and be executed asynchronously on the background
+                let url = self.searchMovieUrl(searchText: searchBar.text!)
+            
+                if let jsonString = self.performMovieDbRequest(with: url) {
+                    if let jsonDictionary = self.parse(json: jsonString) {
+                        
+                        self.searchResults = self.parse(dictionary: jsonDictionary)
+                        // searchResults sorted by voteAverage
+                        self.searchResults.sort(by: { (res1, res2) -> Bool in
+                            return res1.voteAverage > res2.voteAverage
+                        })
+                        DispatchQueue.main.async { // get back to the main queue
+                            // all the UI code should always run on main thread
+                            self.isLoading = false
+                            self.tableView.reloadData()
+                            // after the request completes set isLoading back to false and reload the table again to show the SearchResult objects
+                        }
+                        return
+                    }
+                }
+                DispatchQueue.main.async {
+                    self.showNetworkError()
                 }
             }
-            showNetworkError()
         }
     }
 }
@@ -187,7 +208,9 @@ extension SearchViewController: UISearchBarDelegate {
 extension SearchViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if !hasSearched {
+        if isLoading {
+            return 1
+        } else if !hasSearched {
             return 0
         } else if searchResults.count == 0 {
             return 1
@@ -197,8 +220,15 @@ extension SearchViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if isLoading {
+            let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifiers.loadingCell, for: indexPath)
+            
+            let spinner = cell.viewWithTag(100) as! UIActivityIndicatorView
+            spinner.startAnimating()
+            return cell
+        }
         //if searchBar.text! == "Not"
-        if searchResults.count == 0 {
+        else if searchResults.count == 0 {
             return tableView.dequeueReusableCell(withIdentifier: CellIdentifiers.nothingFoundCell, for: indexPath) // custom cell nib 'Nothing Found'
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifiers.searchResultCell, for: indexPath) as! SearchResultCell // custom nib cell
@@ -221,7 +251,7 @@ extension SearchViewController: UITableViewDelegate {
     }
     // makes sure that can only select rows with actual search results
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        if searchResults.count == 0 {
+        if searchResults.count == 0 || isLoading {
             return nil
         } else {
             return indexPath
