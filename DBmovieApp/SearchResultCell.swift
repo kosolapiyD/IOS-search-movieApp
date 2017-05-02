@@ -45,7 +45,14 @@ class SearchResultCell: UITableViewCell {
         if let posterURL = URL(string: posterBaseUrl + searchResult.posterPath) {
             downloadTask = posterImageView.loadPoster(url: posterURL)
         }
+    }
+    // theoretically possible that you’re scrolling through the table and some cell is about to be reused while its previous image is still loading
+    // this cancel any image download that is still in progress
+    override func prepareForReuse() {
+        super.prepareForReuse()
         
+        downloadTask?.cancel()
+        downloadTask = nil
     }
 
 }

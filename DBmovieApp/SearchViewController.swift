@@ -12,6 +12,12 @@ class SearchViewController: UIViewController {
     
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
+    
+    @IBAction func segmentChanged(_ sender: UISegmentedControl) {
+        performSearch()
+    }
+    
     
     var searchResults = [SearchResult]()
     var dataTask: URLSessionDataTask?
@@ -23,8 +29,8 @@ class SearchViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // add 64 point margin at the top
-        tableView.contentInset = UIEdgeInsets(top: 64, left: 0, bottom: 0, right: 0)
+        // add 64 point (searchBar) margin at the top // and 44 points is the navBar
+        tableView.contentInset = UIEdgeInsets(top: 108, left: 0, bottom: 0, right: 0)
         tableView.rowHeight = 80
         // load the nib (custom cells)
         var cellNib = UINib(nibName: CellIdentifiers.searchResultCell, bundle: nil)
@@ -48,8 +54,14 @@ class SearchViewController: UIViewController {
         static let loadingCell = "LoadingCell"
     }
     
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        performSearch()
+    }
+    
     func searchMovieUrl(searchText: String) -> URL {
+        
         let escapedSearchText = searchText.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
+        
         let urlString = String(format: "https://api.themoviedb.org/3/search/movie?api_key=0a738c97e3cf186d7e0f405b74272e82&language=en-US&query=%@&page=1&include_adult=true", escapedSearchText)
         let url = URL(string: urlString)
         return url!
@@ -158,7 +170,7 @@ extension SearchViewController: UISearchBarDelegate {
         return .topAttached
     }
     
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    func performSearch() {
         // hide the keybord until tap inside the search bar
         // searchBar.resignFirstResponder()
         
