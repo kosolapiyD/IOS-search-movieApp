@@ -17,6 +17,7 @@
 		4C3B62811EB750D000AB3C18 /* SearchResultCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3B62801EB750D000AB3C18 /* SearchResultCell.swift */; };
 		4C3B62831EB75A4700AB3C18 /* NothingFoundCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C3B62821EB75A4700AB3C18 /* NothingFoundCell.xib */; };
 		4C46F78D1EB7DA9E00115F61 /* LoadingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4C46F78C1EB7DA9E00115F61 /* LoadingCell.xib */; };
+		4CA108D71EB8E2D600E34FDA /* PosterDownload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA108D61EB8E2D600E34FDA /* PosterDownload.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		4C3B62801EB750D000AB3C18 /* SearchResultCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchResultCell.swift; sourceTree = "<group>"; };
 		4C3B62821EB75A4700AB3C18 /* NothingFoundCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NothingFoundCell.xib; sourceTree = "<group>"; };
 		4C46F78C1EB7DA9E00115F61 /* LoadingCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoadingCell.xib; sourceTree = "<group>"; };
+		4CA108D61EB8E2D600E34FDA /* PosterDownload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PosterDownload.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +77,7 @@
 				4C3B62761EB71C5B00AB3C18 /* Info.plist */,
 				4C3B627C1EB72D3900AB3C18 /* SearchResult.swift */,
 				4C3B62801EB750D000AB3C18 /* SearchResultCell.swift */,
+				4CA108D61EB8E2D600E34FDA /* PosterDownload.swift */,
 			);
 			path = DBmovieApp;
 			sourceTree = "<group>";
@@ -156,6 +159,7 @@
 			files = (
 				4C3B626D1EB71C5B00AB3C18 /* SearchViewController.swift in Sources */,
 				4C3B627D1EB72D3900AB3C18 /* SearchResult.swift in Sources */,
+				4CA108D71EB8E2D600E34FDA /* PosterDownload.swift in Sources */,
 				4C3B62811EB750D000AB3C18 /* SearchResultCell.swift in Sources */,
 				4C3B626B1EB71C5B00AB3C18 /* AppDelegate.swift in Sources */,
 			);

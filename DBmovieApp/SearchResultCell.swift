@@ -16,7 +16,7 @@ class SearchResultCell: UITableViewCell {
     @IBOutlet weak var voteLabel: UILabel!
     @IBOutlet weak var releaseDateLabel: UILabel!
     
-    
+    var downloadTask: URLSessionDownloadTask?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -30,6 +30,22 @@ class SearchResultCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
+    }
+    
+    let posterBaseUrl = "https://image.tmdb.org/t/p/w45"
+    
+    func configure(for searchResult: SearchResult) {
+        
+        titleLabel.text = searchResult.title
+        releaseDateLabel.text = searchResult.releaseDate
+        voteLabel.text = String(searchResult.voteAverage) + " votes"
+        genreLabel.text = searchResult.genre
+        
+        posterImageView.image = UIImage(named: "Placeholder")
+        if let posterURL = URL(string: posterBaseUrl + searchResult.posterPath) {
+            downloadTask = posterImageView.loadPoster(url: posterURL)
+        }
+        
     }
 
 }

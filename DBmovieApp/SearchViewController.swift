@@ -14,10 +14,12 @@ class SearchViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     var searchResults = [SearchResult]()
-    //var searchResult = SearchResult()
+    var dataTask: URLSessionDataTask?
     
     var hasSearched = false
     var isLoading = false
+    
+    var posterBaseUrl = "https://image.tmdb.org/t/p/w45"
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,20 +54,8 @@ class SearchViewController: UIViewController {
         let url = URL(string: urlString)
         return url!
     }
-    
-    func performMovieDbRequest(with url: URL) -> String? {
-        do {
-            return try String(contentsOf: url, encoding: .utf8)
-        } catch {
-            print("Download Error: \(error)")
-            return nil
-        }
-    }
-    
-    func parse(json: String) -> [String: Any]? {
-        guard let data = json.data(using: .utf8, allowLossyConversion: false)
-            else { return nil }
-        
+
+    func parse(json data: Data) -> [String: Any]? {
         do {
             return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
         } catch {
@@ -82,6 +72,7 @@ class SearchViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
+    // array of searchResults
     func parse(dictionary: [String: Any]) -> [SearchResult] {
         
         guard let array = dictionary["results"] as? [Any] else {
@@ -97,7 +88,7 @@ class SearchViewController: UIViewController {
                 
                 var searchResult: SearchResult?
                 
-                searchResult = parse(movie: resultDict)
+                searchResult = parse(movie: resultDict) // parse movie
                 
                 if let result = searchResult {
                     searchResults.append(result)
@@ -107,11 +98,16 @@ class SearchViewController: UIViewController {
         return searchResults
     }
     
+    // single object { dictionary } of searchResult
     func parse(movie dictionary: [String: Any]) -> SearchResult {
         let searchResult = SearchResult()
         
         searchResult.title = dictionary["title"] as! String
         searchResult.releaseDate = dictionary["release_date"] as! String
+        
+        if let poster = dictionary["poster_path"] as? String {
+            searchResult.posterPath = poster
+        }
         
         if let vote = dictionary["vote_average"] as? Double {
             searchResult.voteAverage = vote
@@ -119,12 +115,13 @@ class SearchViewController: UIViewController {
         
         if let genre = dictionary["genre_ids"] as? [Int] {
             let first = genre.first
+            
             if first == nil {
                 searchResult.genre = ""
+                
             } else {
                 searchResult.genre = String(first!)
             }
-            
             switch searchResult.genre {
                 case "28" : searchResult.genre = "Action"
                 case "12" : searchResult.genre = "Adventure"
@@ -168,39 +165,55 @@ extension SearchViewController: UISearchBarDelegate {
         if !searchBar.text!.isEmpty {
             searchBar.resignFirstResponder()
             
+            // If there was an active data task this cancels it, making sure that no old searches can ever get in the way of the new search
+            dataTask?.cancel()
             // before the networking request, set isLoading to true and reload the table to show the activity indicator
             isLoading = true
             tableView.reloadData()
             
             hasSearched = true
             searchResults = []
-            
-            let queue = DispatchQueue.global()
-            
-            queue.async { // code is in this closure will be put on the queue and be executed asynchronously on the background
-                let url = self.searchMovieUrl(searchText: searchBar.text!)
-            
-                if let jsonString = self.performMovieDbRequest(with: url) {
-                    if let jsonDictionary = self.parse(json: jsonString) {
-                        
-                        self.searchResults = self.parse(dictionary: jsonDictionary)
-                        // searchResults sorted by voteAverage
-                        self.searchResults.sort(by: { (res1, res2) -> Bool in
-                            return res1.voteAverage > res2.voteAverage
-                        })
-                        DispatchQueue.main.async { // get back to the main queue
-                            // all the UI code should always run on main thread
-                            self.isLoading = false
-                            self.tableView.reloadData()
-                            // after the request completes set isLoading back to false and reload the table again to show the SearchResult objects
+        
+            // create the url object with search text
+            let url = searchMovieUrl(searchText: searchBar.text!)
+            // get URLSession object. standart 'shared' session which uses default configuration
+            let session = URLSession.shared
+            // create dataTask, for sending HTTPS GET requests to the server at url
+            // code from the completion handler will be invoked when the data task has received the reply from the server
+            dataTask = session.dataTask(with: url, completionHandler: { (data, response, error) in
+                if let error = error as? NSError, error.code == -999 {
+                    print("Failure! \(error)")
+                    return // previous search was canceled just ignore the code ' -999 '
+                    // check to make sure the HTTP response code really was 200
+                } else if let httpResponse = response as? HTTPURLResponse {
+                    if httpResponse.statusCode == 200 {
+                        //print("Succes! \(data)")
+                        if let data = data {
+                            if let jsonDictionary = self.parse(json: data) {
+                                self.searchResults = self.parse(dictionary: jsonDictionary)
+                                self.searchResults.sort(by: { (v1, v2) -> Bool in
+                                    return v1.voteAverage > v2.voteAverage
+                                })
+                                DispatchQueue.main.async {
+                                    self.isLoading = false
+                                    self.tableView.reloadData()
+                                }
+                                return
+                            }
                         }
-                        return
+                    } else {
+                        print("Failure! \(response)")
                     }
                 }
                 DispatchQueue.main.async {
+                    self.hasSearched = false
+                    self.isLoading = false
+                    self.tableView.reloadData()
                     self.showNetworkError()
                 }
-            }
+            })
+            dataTask?.resume() // start the dataTask, this sends request to the server
+            // and URLSession is Asynchronous by default, so all this happens on background thread
         }
     }
 }
@@ -234,10 +247,7 @@ extension SearchViewController: UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifiers.searchResultCell, for: indexPath) as! SearchResultCell // custom nib cell
             
             let searchResult = searchResults[indexPath.row]
-            cell.titleLabel.text = searchResult.title
-            cell.releaseDateLabel.text = searchResult.releaseDate
-            cell.voteLabel.text = String(searchResult.voteAverage) + " votes"
-            cell.genreLabel.text = searchResult.genre
+            cell.configure(for: searchResult)
             return cell
         }
     }

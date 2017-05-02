@@ -15,6 +15,7 @@ class SearchResult {
     var genre = ""
     var voteAverage = 0.0
     var posterPath = ""
+    
 }
 
 
