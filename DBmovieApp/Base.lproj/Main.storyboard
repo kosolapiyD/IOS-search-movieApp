@@ -42,8 +42,8 @@
                                 <items>
                                     <navigationItem id="UED-Cq-3Ak">
                                         <nil key="title"/>
-                                        <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="pHf-Og-Tf6">
-                                            <rect key="frame" x="10" y="7" width="300" height="30"/>
+                                        <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" id="pHf-Og-Tf6">
+                                            <rect key="frame" x="9" y="7" width="303" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
                                                 <segment title="Popular"/>
@@ -77,11 +77,87 @@
                         <outlet property="searchBar" destination="TJV-hW-7Tq" id="Kua-tw-LPj"/>
                         <outlet property="segmentedControl" destination="pHf-Og-Tf6" id="rQ3-rR-IWE"/>
                         <outlet property="tableView" destination="mJD-od-dFN" id="Tp8-hC-c5d"/>
+                        <segue destination="k43-I0-zu3" kind="presentation" identifier="ShowDetail" id="xLP-FD-OGV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-364" y="90"/>
+            <point key="canvasLocation" x="-454" y="89"/>
+        </scene>
+        <!--Detail View Controller-->
+        <scene sceneID="etv-jP-43b">
+            <objects>
+                <viewController id="k43-I0-zu3" customClass="DetailViewController" customModule="DBmovieApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="u7k-hd-EgD"/>
+                        <viewControllerLayoutGuide type="bottom" id="Ntu-Js-56Q"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="s8L-Sh-umN">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="S5t-sI-3rm" userLabel="Pop-up View">
+                                <rect key="frame" x="40" y="94" width="240" height="380"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gxk-HT-aGf" userLabel="Close Button">
+                                        <rect key="frame" x="3" y="0.0" width="15" height="22"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="22" id="2P5-bi-u7x"/>
+                                        </constraints>
+                                        <state key="normal" image="CloseButton"/>
+                                        <connections>
+                                            <action selector="close" destination="k43-I0-zu3" eventType="touchUpInside" id="a8J-kN-pAQ"/>
+                                        </connections>
+                                    </button>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="t72-GD-FAR">
+                                        <rect key="frame" x="25" y="8" width="190" height="200"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="200" id="Aok-sM-CP7"/>
+                                            <constraint firstAttribute="width" constant="190" id="FLh-nW-yfg"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ovreview" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="10" baselineAdjustment="alignBaselines" minimumScaleFactor="0.80000000000000004" translatesAutoresizingMaskIntoConstraints="NO" id="7DU-b8-gD0">
+                                        <rect key="frame" x="20" y="216" width="200" height="145"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="200" id="FxQ-oZ-3t8"/>
+                                            <constraint firstAttribute="height" constant="145" id="t9e-MX-1Zm"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="AvenirNextCondensed-Italic" family="Avenir Next Condensed" pointSize="18"/>
+                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="0.94999999999999996" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="380" id="5V4-z6-tOQ"/>
+                                    <constraint firstItem="t72-GD-FAR" firstAttribute="top" secondItem="S5t-sI-3rm" secondAttribute="top" constant="8" id="HuO-lU-7rl"/>
+                                    <constraint firstItem="t72-GD-FAR" firstAttribute="leading" secondItem="gxk-HT-aGf" secondAttribute="trailing" constant="7" id="SbA-rA-vDW"/>
+                                    <constraint firstItem="gxk-HT-aGf" firstAttribute="leading" secondItem="S5t-sI-3rm" secondAttribute="leading" constant="3" id="TCI-H9-d4w"/>
+                                    <constraint firstItem="7DU-b8-gD0" firstAttribute="top" secondItem="t72-GD-FAR" secondAttribute="bottom" constant="8" id="XdU-Tp-oBG"/>
+                                    <constraint firstItem="gxk-HT-aGf" firstAttribute="top" secondItem="S5t-sI-3rm" secondAttribute="top" id="Zkl-xz-zqw"/>
+                                    <constraint firstAttribute="width" constant="240" id="hLk-X7-Vei"/>
+                                    <constraint firstItem="7DU-b8-gD0" firstAttribute="centerX" secondItem="S5t-sI-3rm" secondAttribute="centerX" id="kAB-AF-fYY"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.5" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="S5t-sI-3rm" firstAttribute="centerY" secondItem="s8L-Sh-umN" secondAttribute="centerY" id="Nft-CZ-yVe"/>
+                            <constraint firstItem="S5t-sI-3rm" firstAttribute="centerX" secondItem="s8L-Sh-umN" secondAttribute="centerX" id="tur-cH-aME"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="overviewLabel" destination="7DU-b8-gD0" id="nzJ-g0-nKy"/>
+                        <outlet property="popUpView" destination="S5t-sI-3rm" id="rCQ-FM-678"/>
+                        <outlet property="posterImage" destination="t72-GD-FAR" id="Iks-84-i0D"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="eL2-kY-7bA" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="236.25" y="88.732394366197184"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="CloseButton" width="15" height="15"/>
+    </resources>
 </document>

@@ -13,19 +13,41 @@ class SearchViewController: UIViewController {
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var segmentedControl: UISegmentedControl!
-    
+
     @IBAction func segmentChanged(_ sender: UISegmentedControl) {
-        performSearch()
+        
+        print(segmentedControl.selectedSegmentIndex)
+        
+        // performSearch()
+        
+        switch segmentedControl.selectedSegmentIndex {
+            
+            // popular
+        case 0 : segmentUrl = URL(string : "https://api.themoviedb.org/3/discover/movie?api_key=0a738c97e3cf186d7e0f405b74272e82&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1")
+                        // drama
+        case 1 : segmentUrl = URL(string : "https://api.themoviedb.org/3/discover/movie?api_key=0a738c97e3cf186d7e0f405b74272e82&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=18")
+   
+            // horror
+        case 2 : segmentUrl = URL(string : "https://api.themoviedb.org/3/discover/movie?api_key=0a738c97e3cf186d7e0f405b74272e82&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=27")
+            
+            // animation
+        case 3 : segmentUrl = URL(string : "https://api.themoviedb.org/3/discover/movie?api_key=0a738c97e3cf186d7e0f405b74272e82&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=16")
+            
+            default: break
+        }
     }
     
+    var segmentUrl: URL!
+
     
-    var searchResults = [SearchResult]()
-    var dataTask: URLSessionDataTask?
+//    var searchResults = [SearchResult]()
+//    var dataTask: URLSessionDataTask?
+//    
+//    var hasSearched = false
+//    var isLoading = false
     
-    var hasSearched = false
-    var isLoading = false
+    let search = Search()
     
-    var posterBaseUrl = "https://image.tmdb.org/t/p/w45"
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,25 +78,10 @@ class SearchViewController: UIViewController {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         performSearch()
+
     }
     
-    func searchMovieUrl(searchText: String) -> URL {
-        
-        let escapedSearchText = searchText.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
-        
-        let urlString = String(format: "https://api.themoviedb.org/3/search/movie?api_key=0a738c97e3cf186d7e0f405b74272e82&language=en-US&query=%@&page=1&include_adult=true", escapedSearchText)
-        let url = URL(string: urlString)
-        return url!
-    }
-
-    func parse(json data: Data) -> [String: Any]? {
-        do {
-            return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-        } catch {
-            print("JSON eror: \(error)")
-            return nil
-        }
-    }
+    
     
     func showNetworkError() {
         let alert = UIAlertController(title: "Whoops...", message: "There was an error reading from The Movie DB. Please try again.", preferredStyle: .alert)
@@ -84,82 +91,17 @@ class SearchViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    // array of searchResults
-    func parse(dictionary: [String: Any]) -> [SearchResult] {
-        
-        guard let array = dictionary["results"] as? [Any] else {
-            print("Expected 'results' array")
-            return []
+    
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "ShowDetail" {
+            let detailViewController = segue.destination as! DetailViewController
+            let indexPath = sender as! IndexPath
+            let searchResult = search.searchResults[indexPath.row]
+            detailViewController.searchResult = searchResult
         }
-        
-        var searchResults: [SearchResult] = []
-        
-        for resultDict in array {
-            
-            if let resultDict = resultDict as? [String: Any] {
-                
-                var searchResult: SearchResult?
-                
-                searchResult = parse(movie: resultDict) // parse movie
-                
-                if let result = searchResult {
-                    searchResults.append(result)
-                }
-            }
-        }
-        return searchResults
     }
     
-    // single object { dictionary } of searchResult
-    func parse(movie dictionary: [String: Any]) -> SearchResult {
-        let searchResult = SearchResult()
-        
-        searchResult.title = dictionary["title"] as! String
-        searchResult.releaseDate = dictionary["release_date"] as! String
-        
-        if let poster = dictionary["poster_path"] as? String {
-            searchResult.posterPath = poster
-        }
-        
-        if let vote = dictionary["vote_average"] as? Double {
-            searchResult.voteAverage = vote
-        }
-        
-        if let genre = dictionary["genre_ids"] as? [Int] {
-            let first = genre.first
-            
-            if first == nil {
-                searchResult.genre = ""
-                
-            } else {
-                searchResult.genre = String(first!)
-            }
-            switch searchResult.genre {
-                case "28" : searchResult.genre = "Action"
-                case "12" : searchResult.genre = "Adventure"
-                case "16" : searchResult.genre = "Animation"
-                case "35" : searchResult.genre = "Comedy"
-                case "80" : searchResult.genre = "Crime"
-                case "99" : searchResult.genre = "Documentary"
-                case "18" : searchResult.genre = "Drama"
-                case "10751" : searchResult.genre = "Family"
-                case "14" : searchResult.genre = "Fantasy"
-                case "36" : searchResult.genre = "History"
-                case "27" : searchResult.genre = "Horror"
-                case "10402" : searchResult.genre = "Music"
-                case "9648" : searchResult.genre = "Mystery"
-                case "10749" : searchResult.genre = "Romance"
-                case "878" : searchResult.genre = "Science Fiction"
-                case "10770" : searchResult.genre = "TV Movie"
-                case "53" : searchResult.genre = "Thriller"
-                case "10752" : searchResult.genre = "War"
-                case "37" : searchResult.genre = "Western"
-            default : searchResult.genre = "No genre"
-            }
-            
-        }
-        return searchResult
-        }
 }
 
 // MARK: -> EXTENSIONS
@@ -173,7 +115,21 @@ extension SearchViewController: UISearchBarDelegate {
     func performSearch() {
         // hide the keybord until tap inside the search bar
         // searchBar.resignFirstResponder()
+        search.performSearch(for: searchBar.text!, completion: { success in
+            
+            if !success {
+                self.showNetworkError()
+            }
+            self.tableView.reloadData()
+        })
         
+        tableView.reloadData()
+        searchBar.resignFirstResponder()
+        
+        
+        
+        
+        /*
         if !searchBar.text!.isEmpty {
             searchBar.resignFirstResponder()
             
@@ -186,8 +142,11 @@ extension SearchViewController: UISearchBarDelegate {
             hasSearched = true
             searchResults = []
         
+            // url = segmentUrl!
+            
             // create the url object with search text
             let url = searchMovieUrl(searchText: searchBar.text!)
+            
             // get URLSession object. standart 'shared' session which uses default configuration
             let session = URLSession.shared
             // create dataTask, for sending HTTPS GET requests to the server at url
@@ -226,26 +185,28 @@ extension SearchViewController: UISearchBarDelegate {
             })
             dataTask?.resume() // start the dataTask, this sends request to the server
             // and URLSession is Asynchronous by default, so all this happens on background thread
-        }
+        }*///..........
+        
+        
     }
 }
 // MARK: -> table view data source
 extension SearchViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isLoading {
+        if search.isLoading {
             return 1
-        } else if !hasSearched {
+        } else if !search.hasSearched {
             return 0
-        } else if searchResults.count == 0 {
+        } else if search.searchResults.count == 0 {
             return 1
         } else {
-            return searchResults.count
+            return search.searchResults.count
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if isLoading {
+        if search.isLoading {
             let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifiers.loadingCell, for: indexPath)
             
             let spinner = cell.viewWithTag(100) as! UIActivityIndicatorView
@@ -253,12 +214,12 @@ extension SearchViewController: UITableViewDataSource {
             return cell
         }
         //if searchBar.text! == "Not"
-        else if searchResults.count == 0 {
+        else if search.searchResults.count == 0 {
             return tableView.dequeueReusableCell(withIdentifier: CellIdentifiers.nothingFoundCell, for: indexPath) // custom cell nib 'Nothing Found'
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifiers.searchResultCell, for: indexPath) as! SearchResultCell // custom nib cell
             
-            let searchResult = searchResults[indexPath.row]
+            let searchResult = search.searchResults[indexPath.row]
             cell.configure(for: searchResult)
             return cell
         }
@@ -270,10 +231,12 @@ extension SearchViewController: UITableViewDelegate {
     // deselct the row with animation, not selected all the time
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    
+        performSegue(withIdentifier: "ShowDetail", sender: indexPath)
     }
     // makes sure that can only select rows with actual search results
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        if searchResults.count == 0 || isLoading {
+        if search.searchResults.count == 0 || search.isLoading {
             return nil
         } else {
             return indexPath
