@@ -20,31 +20,25 @@ class SearchViewController: UIViewController {
         
         // performSearch()
         
-        switch segmentedControl.selectedSegmentIndex {
-            
-            // popular
-        case 0 : segmentUrl = URL(string : "https://api.themoviedb.org/3/discover/movie?api_key=0a738c97e3cf186d7e0f405b74272e82&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1")
-                        // drama
-        case 1 : segmentUrl = URL(string : "https://api.themoviedb.org/3/discover/movie?api_key=0a738c97e3cf186d7e0f405b74272e82&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=18")
-   
-            // horror
-        case 2 : segmentUrl = URL(string : "https://api.themoviedb.org/3/discover/movie?api_key=0a738c97e3cf186d7e0f405b74272e82&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=27")
-            
-            // animation
-        case 3 : segmentUrl = URL(string : "https://api.themoviedb.org/3/discover/movie?api_key=0a738c97e3cf186d7e0f405b74272e82&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=16")
-            
-            default: break
-        }
+//        switch segmentedControl.selectedSegmentIndex {
+//            
+//            // popular
+//        case 0 : segmentUrl = URL(string : "https://api.themoviedb.org/3/discover/movie?api_key=0a738c97e3cf186d7e0f405b74272e82&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1")
+//                        // drama
+//        case 1 : segmentUrl = URL(string : "https://api.themoviedb.org/3/discover/movie?api_key=0a738c97e3cf186d7e0f405b74272e82&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=18")
+//   
+//            // horror
+//        case 2 : segmentUrl = URL(string : "https://api.themoviedb.org/3/discover/movie?api_key=0a738c97e3cf186d7e0f405b74272e82&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=27")
+//            
+//            // animation
+//        case 3 : segmentUrl = URL(string : "https://api.themoviedb.org/3/discover/movie?api_key=0a738c97e3cf186d7e0f405b74272e82&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=16")
+//            
+//            default: break
+//        }
     }
     
-    var segmentUrl: URL!
+    //var segmentUrl: URL!
 
-    
-//    var searchResults = [SearchResult]()
-//    var dataTask: URLSessionDataTask?
-//    
-//    var hasSearched = false
-//    var isLoading = false
     
     let search = Search()
     
@@ -125,71 +119,9 @@ extension SearchViewController: UISearchBarDelegate {
         
         tableView.reloadData()
         searchBar.resignFirstResponder()
-        
-        
-        
-        
-        /*
-        if !searchBar.text!.isEmpty {
-            searchBar.resignFirstResponder()
-            
-            // If there was an active data task this cancels it, making sure that no old searches can ever get in the way of the new search
-            dataTask?.cancel()
-            // before the networking request, set isLoading to true and reload the table to show the activity indicator
-            isLoading = true
-            tableView.reloadData()
-            
-            hasSearched = true
-            searchResults = []
-        
-            // url = segmentUrl!
-            
-            // create the url object with search text
-            let url = searchMovieUrl(searchText: searchBar.text!)
-            
-            // get URLSession object. standart 'shared' session which uses default configuration
-            let session = URLSession.shared
-            // create dataTask, for sending HTTPS GET requests to the server at url
-            // code from the completion handler will be invoked when the data task has received the reply from the server
-            dataTask = session.dataTask(with: url, completionHandler: { (data, response, error) in
-                if let error = error as? NSError, error.code == -999 {
-                    print("Failure! \(error)")
-                    return // previous search was canceled just ignore the code ' -999 '
-                    // check to make sure the HTTP response code really was 200
-                } else if let httpResponse = response as? HTTPURLResponse {
-                    if httpResponse.statusCode == 200 {
-                        //print("Succes! \(data)")
-                        if let data = data {
-                            if let jsonDictionary = self.parse(json: data) {
-                                self.searchResults = self.parse(dictionary: jsonDictionary)
-                                self.searchResults.sort(by: { (v1, v2) -> Bool in
-                                    return v1.voteAverage > v2.voteAverage
-                                })
-                                DispatchQueue.main.async {
-                                    self.isLoading = false
-                                    self.tableView.reloadData()
-                                }
-                                return
-                            }
-                        }
-                    } else {
-                        print("Failure! \(response)")
-                    }
-                }
-                DispatchQueue.main.async {
-                    self.hasSearched = false
-                    self.isLoading = false
-                    self.tableView.reloadData()
-                    self.showNetworkError()
-                }
-            })
-            dataTask?.resume() // start the dataTask, this sends request to the server
-            // and URLSession is Asynchronous by default, so all this happens on background thread
-        }*///..........
-        
-        
     }
 }
+
 // MARK: -> table view data source
 extension SearchViewController: UITableViewDataSource {
     

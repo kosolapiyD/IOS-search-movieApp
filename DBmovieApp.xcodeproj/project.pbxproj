@@ -73,8 +73,9 @@
 			isa = PBXGroup;
 			children = (
 				4C3B626A1EB71C5B00AB3C18 /* AppDelegate.swift */,
-				4C3B626C1EB71C5B00AB3C18 /* SearchViewController.swift */,
-				4CB81BC31EBA630300EC0AC6 /* DetailViewController.swift */,
+				4CE1ACB11F1690E80072A905 /* View */,
+				4CE1ACB01F1690D50072A905 /* controller */,
+				4CE1ACAF1F1690C30072A905 /* Model */,
 				4C3B626E1EB71C5B00AB3C18 /* Main.storyboard */,
 				4C3B627E1EB7472100AB3C18 /* SearchResultCell.xib */,
 				4C3B62821EB75A4700AB3C18 /* NothingFoundCell.xib */,
@@ -82,13 +83,36 @@
 				4C3B62711EB71C5B00AB3C18 /* Assets.xcassets */,
 				4C3B62731EB71C5B00AB3C18 /* LaunchScreen.storyboard */,
 				4C3B62761EB71C5B00AB3C18 /* Info.plist */,
-				4C7967821EFE88B4003BC0C7 /* Search.swift */,
-				4C3B627C1EB72D3900AB3C18 /* SearchResult.swift */,
-				4C3B62801EB750D000AB3C18 /* SearchResultCell.swift */,
-				4CA108D61EB8E2D600E34FDA /* PosterDownload.swift */,
-				4CB81BC51EBA668B00EC0AC6 /* DimmingPresentationController.swift */,
 			);
 			path = DBmovieApp;
+			sourceTree = "<group>";
+		};
+		4CE1ACAF1F1690C30072A905 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				4CA108D61EB8E2D600E34FDA /* PosterDownload.swift */,
+				4C3B627C1EB72D3900AB3C18 /* SearchResult.swift */,
+				4C7967821EFE88B4003BC0C7 /* Search.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		4CE1ACB01F1690D50072A905 /* controller */ = {
+			isa = PBXGroup;
+			children = (
+				4C3B626C1EB71C5B00AB3C18 /* SearchViewController.swift */,
+				4CB81BC31EBA630300EC0AC6 /* DetailViewController.swift */,
+				4CB81BC51EBA668B00EC0AC6 /* DimmingPresentationController.swift */,
+			);
+			name = controller;
+			sourceTree = "<group>";
+		};
+		4CE1ACB11F1690E80072A905 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				4C3B62801EB750D000AB3C18 /* SearchResultCell.swift */,
+			);
+			name = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
